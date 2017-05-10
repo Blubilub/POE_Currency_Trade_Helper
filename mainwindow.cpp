@@ -163,8 +163,6 @@ void MainWindow::parseWebsiteSource(QNetworkReply* reply, int wpID) {
         }
         database.close();
 
-
-
         break;
     case 1:
         ui->labelCaoToAlt->setText(formatRatiosForLabel(val));
