@@ -126,135 +126,165 @@ void MainWindow::parseWebsiteSource(QNetworkReply* reply, int wpID) {
     database.close();
 */
 //*************************************************************************************
-    QFile database("testDB.csv");
-    database.setFileName("database/" + database.fileName());
-    QString errMsg;
-    QFileDevice::FileError err = QFileDevice::NoError;
+    QFile database("");
 
+
+    std::cout << wpID << std::endl;
     QString dbData;
-
     switch(wpID) {
     case 0:
         ui->labelAltToCao->setText(formatRatiosForLabel(val));
-        //QString errMsg;
-        //QFileDevice::FileError err = QFileDevice::NoError;
-        if(!database.exists()) {
-            if (!database.open(QIODevice::ReadWrite | QIODevice::Append)) {
-                errMsg = database.errorString();
-                err = database.error();
-                ui->textBrowser->append(errMsg);
-            }
-            {
-                QTextStream out(&database);
-                out << "date,youSell,youBuy\n";
-            }
-        } else {
-            if (!database.open(QIODevice::ReadWrite | QIODevice::Append)) {
-                errMsg = database.errorString();
-                err = database.error();
-                ui->textBrowser->append(errMsg);
-            }
-        }
-        dbData = CurrencyDatabase::formatDataForDB(&val.at(0));
-
-        {
-            QTextStream out(&database);
-            out << dbData;
-        }
-        database.close();
-
+        database.setFileName("AltToCao.csv");
         break;
     case 1:
         ui->labelCaoToAlt->setText(formatRatiosForLabel(val));
+        database.setFileName("CaoToAlt.csv");
         break;
     case 2:
         ui->labelFusToCao->setText(formatRatiosForLabel(val));
+        database.setFileName("FusToCao.csv");
         break;
     case 3:
         ui->labelCaoToFus->setText(formatRatiosForLabel(val));
+        database.setFileName("CaoToFus.csv");
         break;
     case 4:
         ui->labelExaToCao->setText(formatRatiosForLabel(val));
+        database.setFileName("ExaToCao.csv");
         break;
     case 5:
         ui->labelCaoToExa->setText(formatRatiosForLabel(val, 6));
+        database.setFileName("CaoToExa.csv");
         break;
     case 6:
         ui->labelAlcToCao->setText(formatRatiosForLabel(val));
+        database.setFileName("AlcToCao.csv");
         break;
     case 7:
         ui->labelCaoToAlc->setText(formatRatiosForLabel(val));
+        database.setFileName("CaoToAlc.csv");
         break;
     case 8:
         ui->labelGCPToCao->setText(formatRatiosForLabel(val));
+        database.setFileName("GCPToCao.csv");
         break;
     case 9:
         ui->labelCaoToGCP->setText(formatRatiosForLabel(val));
+        database.setFileName("CaoToGCP.csv");
         break;
     case 10:
         ui->labelChrToCao->setText(formatRatiosForLabel(val));
+        database.setFileName("ChrToCao.csv");
         break;
     case 11:
         ui->labelCaoToChr->setText(formatRatiosForLabel(val));
+        database.setFileName("CaoToChr.csv");
         break;
     case 12:
         ui->labelJewToCao->setText(formatRatiosForLabel(val));
+        database.setFileName("JewToCao.csv");
         break;
     case 13:
         ui->labelCaoToJew->setText(formatRatiosForLabel(val));
+        database.setFileName("CaoToJew.csv");
         break;
     case 14:
         ui->labelChaToCao->setText(formatRatiosForLabel(val));
+        database.setFileName("ChaToCao.csv");
         break;
     case 15:
         ui->labelCaoToCha->setText(formatRatiosForLabel(val));
+        database.setFileName("CaoToCha.csv");
         break;
     case 16:
         ui->labelChiToCao->setText(formatRatiosForLabel(val));
+        database.setFileName("ChiToCao.csv");
         break;
     case 17:
         ui->labelCaoToChi->setText(formatRatiosForLabel(val));
+        database.setFileName("CaoToChi.csv");
         break;
     case 18:
         ui->labelScoToCao->setText(formatRatiosForLabel(val));
+        database.setFileName("ScoToCao.csv");
         break;
     case 19:
         ui->labelCaoToSco->setText(formatRatiosForLabel(val));
+        database.setFileName("CaoToSco.csv");
         break;
     case 20:
         ui->labelBleToCao->setText(formatRatiosForLabel(val));
+        database.setFileName("BleToCao.csv");
         break;
     case 21:
         ui->labelCaoToBle->setText(formatRatiosForLabel(val));
+        database.setFileName("CaoToBle.csv");
         break;
     case 22:
         ui->labelRegToCao->setText(formatRatiosForLabel(val));
+        database.setFileName("RegToCao.csv");
         break;
     case 23:
         ui->labelCaoToReg->setText(formatRatiosForLabel(val));
+        database.setFileName("CaoToReg.csv");
         break;
     case 24:
         ui->labelDivToCao->setText(formatRatiosForLabel(val));
+        database.setFileName("DivToCao.csv");
         break;
     case 25:
         ui->labelCaoToDiv->setText(formatRatiosForLabel(val));
+        database.setFileName("CaoToDiv.csv");
         break;
     case 26:
         ui->labelVaaToCao->setText(formatRatiosForLabel(val));
+        database.setFileName("VaaToCao.csv");
         break;
     case 27:
         ui->labelCaoToVaa->setText(formatRatiosForLabel(val));
+        database.setFileName("CaoToVaa.csv");
         break;
     case 28:
-        ui->labelBauToCao->setText(formatRatiosForLabel(val));
+       // ui->labelBauToCao->setText(formatRatiosForLabel(val));
+        database.setFileName("BauToCao.csv");
         break;
     case 29:
-        ui->labelCaoToBau->setText(formatRatiosForLabel(val));
+        //ui->labelCaoToBau->setText(formatRatiosForLabel(val));
+        database.setFileName("CaoToBau.csv");
         break;
     default:
         break;
 
     }
+
+    database.setFileName("database/" + database.fileName());
+    QString errMsg;
+    QFileDevice::FileError err = QFileDevice::NoError;
+
+    if(!database.exists()) {
+        if (!database.open(QIODevice::ReadWrite | QIODevice::Append)) {
+            errMsg = database.errorString();
+            err = database.error();
+            ui->textBrowser->append(errMsg);
+        }
+        {
+            QTextStream out(&database);
+            out << "date,youSell,youBuy\n";
+        }
+    } else {
+        if (!database.open(QIODevice::ReadWrite | QIODevice::Append)) {
+            errMsg = database.errorString();
+            err = database.error();
+            ui->textBrowser->append(errMsg);
+        }
+    }
+    dbData = CurrencyDatabase::formatDataForDB(&val.at(0));
+
+    for(int i = 5; i<5 && i<val.size(); i++){
+        QTextStream out(&database);
+        out << dbData;
+    }
+    database.close();
 }
 
 

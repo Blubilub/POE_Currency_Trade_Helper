@@ -8,6 +8,7 @@ class CurrencyDatabase
 public:
     CurrencyDatabase();
     static QString formatDataForDB(const buyAndSellVal* val);
+
 };
 
 #endif // CURRENCYDATABASE_H
