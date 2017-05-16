@@ -4,6 +4,7 @@
 #include <QFile>
 #include <QIODevice>
 #include "currencydatabase.h"
+#include <QDir>
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -28,43 +29,104 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->pushButtonBauble, SIGNAL(clicked(bool)), this, SLOT(pushButtonBauClicked()));
     connect(ui->pushButtonDownload, SIGNAL(clicked(bool)), this, SLOT(downloadClicked()));
 
-    linkList[0]  = "http://currency.poe.trade/search?league=Standard&online=x&want=1&have=4";  //alt->c  x
-    linkList[1]  = "http://currency.poe.trade/search?league=Standard&online=x&want=4&have=1";  //c->alt  c
-    linkList[2]  = "http://currency.poe.trade/search?league=Standard&online=x&want=4&have=2";  //fus->c  x
-    linkList[3]  = "http://currency.poe.trade/search?league=Standard&online=x&want=2&have=4";  //c->fus  c
-    linkList[4]  = "http://currency.poe.trade/search?league=Standard&online=x&want=4&have=6";  //exa->c  x
-    linkList[5]  = "http://currency.poe.trade/search?league=Standard&online=x&want=6&have=4";  //c->exa  c
-    linkList[6]  = "http://currency.poe.trade/search?league=Standard&online=x&want=4&have=3";  //alc->c  x
-    linkList[7]  = "http://currency.poe.trade/search?league=Standard&online=x&want=3&have=4";  //c->alc  c
-    linkList[8]  = "http://currency.poe.trade/search?league=Standard&online=x&want=4&have=5";  //gcp->c  x
-    linkList[9]  = "http://currency.poe.trade/search?league=Standard&online=x&want=5&have=4";  //c->gcp  c
-    linkList[10] = "http://currency.poe.trade/search?league=Standard&online=x&want=4&have=7";  //chr->c  x
-    linkList[11] = "http://currency.poe.trade/search?league=Standard&online=x&want=7&have=4";  //c->chr  c
-    linkList[12] = "http://currency.poe.trade/search?league=Standard&online=x&want=4&have=8";  //jew->c  x
-    linkList[13] = "http://currency.poe.trade/search?league=Standard&online=x&want=8&have=4";  //c->jew  c
-    linkList[14] = "http://currency.poe.trade/search?league=Standard&online=x&want=4&have=9";  //cha->c  x
-    linkList[15] = "http://currency.poe.trade/search?league=Standard&online=x&want=9&have=4";  //c->cha  c
-    linkList[16] = "http://currency.poe.trade/search?league=Standard&online=x&want=4&have=10"; //chi->c  x
-    linkList[17] = "http://currency.poe.trade/search?league=Standard&online=x&want=10&have=4"; //c->chi  c
-    linkList[18] = "http://currency.poe.trade/search?league=Standard&online=x&want=4&have=11"; //sco->c  x
-    linkList[19] = "http://currency.poe.trade/search?league=Standard&online=x&want=11&have=4"; //c->sco  c
-    linkList[20] = "http://currency.poe.trade/search?league=Standard&online=x&want=4&have=12"; //ble->c  x
-    linkList[21] = "http://currency.poe.trade/search?league=Standard&online=x&want=12&have=4"; //c->ble  c
-    linkList[22] = "http://currency.poe.trade/search?league=Standard&online=x&want=4&have=13"; //reg->c  x
-    linkList[23] = "http://currency.poe.trade/search?league=Standard&online=x&want=13&have=4"; //c->reg  c
-    linkList[24] = "http://currency.poe.trade/search?league=Standard&online=x&want=4&have=15"; //div->c  x
-    linkList[25] = "http://currency.poe.trade/search?league=Standard&online=x&want=15&have=4"; //c->div  c
-    linkList[26] = "http://currency.poe.trade/search?league=Standard&online=x&want=4&have=16"; //vaa->c  x
-    linkList[27] = "http://currency.poe.trade/search?league=Standard&online=x&want=16&have=4"; //c->vaa  c
-    linkList[28] = "http://currency.poe.trade/search?league=Standard&online=x&want=4&have=21"; //bau->c  x
-    linkList[29] = "http://currency.poe.trade/search?league=Standard&online=x&want=21&have=4"; //c->bau  c
-
     for(int i = 0; i < 30; i++) {
-        wp[i] = new WebsiteParser(i);
-        connect(wp[i], SIGNAL(finishedDownloading(QNetworkReply*, int)), this, SLOT(parseWebsiteSource(QNetworkReply*, int)));
+        tradeDescriptionList[i].websiteParser = new WebsiteParser(i);
+        //wp[i] = new WebsiteParser(i);
+        connect(tradeDescriptionList[i].websiteParser, SIGNAL(finishedDownloading(QNetworkReply*, int)), this, SLOT(parseWebsiteSource(QNetworkReply*, int)));
     }
+    tradeDescriptionList[0].link  = "http://currency.poe.trade/search?league=Standard&online=x&want=1&have=4";  //alt->c  x
+    tradeDescriptionList[1].link  = "http://currency.poe.trade/search?league=Standard&online=x&want=4&have=1";  //c->alt  c
+    tradeDescriptionList[2].link  = "http://currency.poe.trade/search?league=Standard&online=x&want=4&have=2";  //fus->c  x
+    tradeDescriptionList[3].link  = "http://currency.poe.trade/search?league=Standard&online=x&want=2&have=4";  //c->fus  c
+    tradeDescriptionList[4].link  = "http://currency.poe.trade/search?league=Standard&online=x&want=4&have=6";  //exa->c  x
+    tradeDescriptionList[5].link  = "http://currency.poe.trade/search?league=Standard&online=x&want=6&have=4";  //c->exa  c
+    tradeDescriptionList[6].link  = "http://currency.poe.trade/search?league=Standard&online=x&want=4&have=3";  //alc->c  x
+    tradeDescriptionList[7].link  = "http://currency.poe.trade/search?league=Standard&online=x&want=3&have=4";  //c->alc  c
+    tradeDescriptionList[8].link  = "http://currency.poe.trade/search?league=Standard&online=x&want=4&have=5";  //gcp->c  x
+    tradeDescriptionList[9].link  = "http://currency.poe.trade/search?league=Standard&online=x&want=5&have=4";  //c->gcp  c
+    tradeDescriptionList[10].link = "http://currency.poe.trade/search?league=Standard&online=x&want=4&have=7";  //chr->c  x
+    tradeDescriptionList[11].link = "http://currency.poe.trade/search?league=Standard&online=x&want=7&have=4";  //c->chr  c
+    tradeDescriptionList[12].link = "http://currency.poe.trade/search?league=Standard&online=x&want=4&have=8";  //jew->c  x
+    tradeDescriptionList[13].link = "http://currency.poe.trade/search?league=Standard&online=x&want=8&have=4";  //c->jew  c
+    tradeDescriptionList[14].link = "http://currency.poe.trade/search?league=Standard&online=x&want=4&have=9";  //cha->c  x
+    tradeDescriptionList[15].link = "http://currency.poe.trade/search?league=Standard&online=x&want=9&have=4";  //c->cha  c
+    tradeDescriptionList[16].link = "http://currency.poe.trade/search?league=Standard&online=x&want=4&have=10"; //chi->c  x
+    tradeDescriptionList[17].link = "http://currency.poe.trade/search?league=Standard&online=x&want=10&have=4"; //c->chi  c
+    tradeDescriptionList[18].link = "http://currency.poe.trade/search?league=Standard&online=x&want=4&have=11"; //sco->c  x
+    tradeDescriptionList[19].link = "http://currency.poe.trade/search?league=Standard&online=x&want=11&have=4"; //c->sco  c
+    tradeDescriptionList[20].link = "http://currency.poe.trade/search?league=Standard&online=x&want=4&have=12"; //ble->c  x
+    tradeDescriptionList[21].link = "http://currency.poe.trade/search?league=Standard&online=x&want=12&have=4"; //c->ble  c
+    tradeDescriptionList[22].link = "http://currency.poe.trade/search?league=Standard&online=x&want=4&have=13"; //reg->c  x
+    tradeDescriptionList[23].link = "http://currency.poe.trade/search?league=Standard&online=x&want=13&have=4"; //c->reg  c
+    tradeDescriptionList[24].link = "http://currency.poe.trade/search?league=Standard&online=x&want=4&have=15"; //div->c  x
+    tradeDescriptionList[25].link = "http://currency.poe.trade/search?league=Standard&online=x&want=15&have=4"; //c->div  c
+    tradeDescriptionList[26].link = "http://currency.poe.trade/search?league=Standard&online=x&want=4&have=16"; //vaa->c  x
+    tradeDescriptionList[27].link = "http://currency.poe.trade/search?league=Standard&online=x&want=16&have=4"; //c->vaa  c
+    tradeDescriptionList[28].link = "http://currency.poe.trade/search?league=Standard&online=x&want=4&have=21"; //bau->c  x
+    tradeDescriptionList[29].link = "http://currency.poe.trade/search?league=Standard&online=x&want=21&have=4"; //c->bau  c
 
 
+    tradeDescriptionList[0].label = ui->labelAltToCao;
+    tradeDescriptionList[1].label = ui->labelCaoToAlt;
+    tradeDescriptionList[2].label = ui->labelFusToCao;
+    tradeDescriptionList[3].label = ui->labelCaoToFus;
+    tradeDescriptionList[4].label = ui->labelExaToCao;
+    tradeDescriptionList[5].label = ui->labelCaoToExa;
+    tradeDescriptionList[6].label = ui->labelAlcToCao;
+    tradeDescriptionList[7].label = ui->labelCaoToAlc;
+    tradeDescriptionList[8].label = ui->labelGCPToCao;
+    tradeDescriptionList[9].label = ui->labelCaoToGCP;
+    tradeDescriptionList[10].label = ui->labelChrToCao;
+    tradeDescriptionList[11].label = ui->labelCaoToChr;
+    tradeDescriptionList[12].label = ui->labelJewToCao;
+    tradeDescriptionList[13].label = ui->labelCaoToJew;
+    tradeDescriptionList[14].label = ui->labelChaToCao;
+    tradeDescriptionList[15].label = ui->labelCaoToCha;
+    tradeDescriptionList[16].label = ui->labelChiToCao;
+    tradeDescriptionList[17].label = ui->labelCaoToChi;
+    tradeDescriptionList[18].label = ui->labelScoToCao;
+    tradeDescriptionList[19].label = ui->labelCaoToSco;
+    tradeDescriptionList[20].label = ui->labelBleToCao;
+    tradeDescriptionList[21].label = ui->labelCaoToBle;
+    tradeDescriptionList[22].label = ui->labelRegToCao;
+    tradeDescriptionList[23].label = ui->labelCaoToReg;
+    tradeDescriptionList[24].label = ui->labelDivToCao;
+    tradeDescriptionList[25].label = ui->labelCaoToDiv;
+    tradeDescriptionList[26].label = ui->labelVaaToCao;
+    tradeDescriptionList[27].label = ui->labelCaoToVaa;
+    tradeDescriptionList[28].label = ui->labelBauToCao;
+    tradeDescriptionList[29].label = ui->labelCaoToBau;
+
+    tradeDescriptionList[0].name = "AltToCao";
+    tradeDescriptionList[1].name = "CaoToAlt";
+    tradeDescriptionList[2].name = "FusToCao";
+    tradeDescriptionList[3].name = "CaoToFus";
+    tradeDescriptionList[4].name = "ExaToCao";
+    tradeDescriptionList[5].name = "CaoToExa";
+    tradeDescriptionList[6].name = "AlcToCao";
+    tradeDescriptionList[7].name = "CaoToAlc";
+    tradeDescriptionList[8].name = "GCPToCao";
+    tradeDescriptionList[9].name = "CaoToGCP";
+    tradeDescriptionList[10].name = "ChrToCao";
+    tradeDescriptionList[11].name = "CaoToChr";
+    tradeDescriptionList[12].name = "JewToCao";
+    tradeDescriptionList[13].name = "CaoToJew";
+    tradeDescriptionList[14].name = "ChaToCao";
+    tradeDescriptionList[15].name = "CaoToCha";
+    tradeDescriptionList[16].name = "ChiToCao";
+    tradeDescriptionList[17].name = "CaoToChi";
+    tradeDescriptionList[18].name = "ScoToCao";
+    tradeDescriptionList[19].name = "CaoToSco";
+    tradeDescriptionList[20].name = "BleToCao";
+    tradeDescriptionList[21].name = "CaoToBle";
+    tradeDescriptionList[22].name = "RegToCao";
+    tradeDescriptionList[23].name = "CaoToReg";
+    tradeDescriptionList[24].name = "DivToCao";
+    tradeDescriptionList[25].name = "CaoToDiv";
+    tradeDescriptionList[26].name = "VaaToCao";
+    tradeDescriptionList[27].name = "CaoToVaa";
+    tradeDescriptionList[28].name = "BauToCao";
+    tradeDescriptionList[29].name = "CaoToBau";
 }
 
 
@@ -76,211 +138,37 @@ MainWindow::~MainWindow() {
 void MainWindow::downloadClicked() {
     ui->textBrowser->clear();
     for(int i = 0; i < 30; i++) {
-        wp[i]->getWebsite(linkList[i]);
+        tradeDescriptionList[i].websiteParser->getWebsite(tradeDescriptionList[i].link);
     }
 }
 
 
 void MainWindow::parseWebsiteSource(QNetworkReply* reply, int wpID) {
     QString strReply = reply->readAll();
+    if(strReply.size() == 0) {
+        std::cout << "Konnte keine Daten von der Website empfangen!" << std::endl;
+        return;
+    }
     QList<buyAndSellVal> val = WebsiteParser::getBuyAndSellVal(strReply);
-
-//*************************************************************************************
-//***********                 QFile Example                                ************
-//*************************************************************************************
-/*
-    QFile database("testDB.csv");
-    database.setFileName("database/" + database.fileName());
-
-    QString errMsg;
-    QFileDevice::FileError err = QFileDevice::NoError;
-    if(!database.exists()) {
-        if (!database.open(QIODevice::WriteOnly)) {
-            errMsg = database.errorString();
-            err = database.error();
-            ui->textBrowser->append(errMsg);
-            return;
-        }
-        database.close();
-    }
-
-    if (!database.open(QIODevice::ReadOnly)) {
-        errMsg = database.errorString();
-        err = database.error();
-        ui->textBrowser->append(errMsg);
-        return;
-    }
-    QTextStream in(&database);
-    QString f = in.readLine();
-    database.close();
-
-    if (!database.open(QIODevice::WriteOnly | QIODevice::Append)) {
-        errMsg = database.errorString();
-        err = database.error();
-        ui->textBrowser->append(errMsg);
-        return;
-    }
-    QString dbData = "Textfeld 1,Textfeld 2,Textfeld 3,Textfeld 4,Textfeld 5,Textfeld 6\n3423,2542,6553,52344,5435,534256\n";
-    QTextStream out(&database);
-    out << dbData;
-    database.close();
-*/
-//*************************************************************************************
+    tradeDescriptionList[wpID].label->setText(formatRatiosForLabel(val));
     QFile database("");
-
-
-    std::cout << wpID << std::endl;
+    database.setFileName(tradeDescriptionList[wpID].name + ".csv");
     QString dbData;
-    switch(wpID) {
-    case 0:
-        ui->labelAltToCao->setText(formatRatiosForLabel(val));
-        database.setFileName("AltToCao.csv");
-        break;
-    case 1:
-        ui->labelCaoToAlt->setText(formatRatiosForLabel(val));
-        database.setFileName("CaoToAlt.csv");
-        break;
-    case 2:
-        ui->labelFusToCao->setText(formatRatiosForLabel(val));
-        database.setFileName("FusToCao.csv");
-        break;
-    case 3:
-        ui->labelCaoToFus->setText(formatRatiosForLabel(val));
-        database.setFileName("CaoToFus.csv");
-        break;
-    case 4:
-        ui->labelExaToCao->setText(formatRatiosForLabel(val));
-        database.setFileName("ExaToCao.csv");
-        break;
-    case 5:
-        ui->labelCaoToExa->setText(formatRatiosForLabel(val, 6));
-        database.setFileName("CaoToExa.csv");
-        break;
-    case 6:
-        ui->labelAlcToCao->setText(formatRatiosForLabel(val));
-        database.setFileName("AlcToCao.csv");
-        break;
-    case 7:
-        ui->labelCaoToAlc->setText(formatRatiosForLabel(val));
-        database.setFileName("CaoToAlc.csv");
-        break;
-    case 8:
-        ui->labelGCPToCao->setText(formatRatiosForLabel(val));
-        database.setFileName("GCPToCao.csv");
-        break;
-    case 9:
-        ui->labelCaoToGCP->setText(formatRatiosForLabel(val));
-        database.setFileName("CaoToGCP.csv");
-        break;
-    case 10:
-        ui->labelChrToCao->setText(formatRatiosForLabel(val));
-        database.setFileName("ChrToCao.csv");
-        break;
-    case 11:
-        ui->labelCaoToChr->setText(formatRatiosForLabel(val));
-        database.setFileName("CaoToChr.csv");
-        break;
-    case 12:
-        ui->labelJewToCao->setText(formatRatiosForLabel(val));
-        database.setFileName("JewToCao.csv");
-        break;
-    case 13:
-        ui->labelCaoToJew->setText(formatRatiosForLabel(val));
-        database.setFileName("CaoToJew.csv");
-        break;
-    case 14:
-        ui->labelChaToCao->setText(formatRatiosForLabel(val));
-        database.setFileName("ChaToCao.csv");
-        break;
-    case 15:
-        ui->labelCaoToCha->setText(formatRatiosForLabel(val));
-        database.setFileName("CaoToCha.csv");
-        break;
-    case 16:
-        ui->labelChiToCao->setText(formatRatiosForLabel(val));
-        database.setFileName("ChiToCao.csv");
-        break;
-    case 17:
-        ui->labelCaoToChi->setText(formatRatiosForLabel(val));
-        database.setFileName("CaoToChi.csv");
-        break;
-    case 18:
-        ui->labelScoToCao->setText(formatRatiosForLabel(val));
-        database.setFileName("ScoToCao.csv");
-        break;
-    case 19:
-        ui->labelCaoToSco->setText(formatRatiosForLabel(val));
-        database.setFileName("CaoToSco.csv");
-        break;
-    case 20:
-        ui->labelBleToCao->setText(formatRatiosForLabel(val));
-        database.setFileName("BleToCao.csv");
-        break;
-    case 21:
-        ui->labelCaoToBle->setText(formatRatiosForLabel(val));
-        database.setFileName("CaoToBle.csv");
-        break;
-    case 22:
-        ui->labelRegToCao->setText(formatRatiosForLabel(val));
-        database.setFileName("RegToCao.csv");
-        break;
-    case 23:
-        ui->labelCaoToReg->setText(formatRatiosForLabel(val));
-        database.setFileName("CaoToReg.csv");
-        break;
-    case 24:
-        ui->labelDivToCao->setText(formatRatiosForLabel(val));
-        database.setFileName("DivToCao.csv");
-        break;
-    case 25:
-        ui->labelCaoToDiv->setText(formatRatiosForLabel(val));
-        database.setFileName("CaoToDiv.csv");
-        break;
-    case 26:
-        ui->labelVaaToCao->setText(formatRatiosForLabel(val));
-        database.setFileName("VaaToCao.csv");
-        break;
-    case 27:
-        ui->labelCaoToVaa->setText(formatRatiosForLabel(val));
-        database.setFileName("CaoToVaa.csv");
-        break;
-    case 28:
-       // ui->labelBauToCao->setText(formatRatiosForLabel(val));
-        database.setFileName("BauToCao.csv");
-        break;
-    case 29:
-        //ui->labelCaoToBau->setText(formatRatiosForLabel(val));
-        database.setFileName("CaoToBau.csv");
-        break;
-    default:
-        break;
-
-    }
-
     database.setFileName("database/" + database.fileName());
+    if (!database.exists()) {
+        QTextStream out(&database);
+        out << "date,youSell,youBuy\n";
+    }
     QString errMsg;
     QFileDevice::FileError err = QFileDevice::NoError;
-
-    if(!database.exists()) {
-        if (!database.open(QIODevice::ReadWrite | QIODevice::Append)) {
-            errMsg = database.errorString();
-            err = database.error();
-            ui->textBrowser->append(errMsg);
-        }
-        {
-            QTextStream out(&database);
-            out << "date,youSell,youBuy\n";
-        }
-    } else {
-        if (!database.open(QIODevice::ReadWrite | QIODevice::Append)) {
-            errMsg = database.errorString();
-            err = database.error();
-            ui->textBrowser->append(errMsg);
-        }
+    if(!database.open(QIODevice::WriteOnly | QIODevice::Append)) {
+        std::cerr << "DATABASE DOESNT EXIST" << std::endl;
+        err = database.error();
+        ui->textBrowser->append(errMsg);
+        return;
     }
-    dbData = CurrencyDatabase::formatDataForDB(&val.at(0));
-
-    for(int i = 5; i<5 && i<val.size(); i++){
+    for(int i = 0; i<5 && i<val.size(); i++){
+        dbData = CurrencyDatabase::formatDataForDB(&val.at(i));
         QTextStream out(&database);
         out << dbData;
     }

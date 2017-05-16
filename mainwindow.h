@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+//#include "currencydatabase.h"
 #include "websiteparser.h"
 #include "includes.h"
 
@@ -19,9 +20,11 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    WebsiteParser* wp[30];
+
+    //WebsiteParser* wp[30];
     QString formatRatiosForLabel(QList<buyAndSellVal> val, int view = 1);
-    QString linkList[30];
+    tradeDescription tradeDescriptionList[30];
+    //QString linkList[30];
 
 private slots:
     void pushButtonAltClicked();
