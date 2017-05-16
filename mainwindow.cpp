@@ -151,28 +151,12 @@ void MainWindow::parseWebsiteSource(QNetworkReply* reply, int wpID) {
     }
     QList<buyAndSellVal> val = WebsiteParser::getBuyAndSellVal(strReply);
     tradeDescriptionList[wpID].label->setText(formatRatiosForLabel(val));
-    QFile database("");
-    database.setFileName(tradeDescriptionList[wpID].name + ".csv");
-    QString dbData;
-    database.setFileName("database/" + database.fileName());
-    if (!database.exists()) {
-        QTextStream out(&database);
-        out << "date,youSell,youBuy\n";
-    }
-    QString errMsg;
-    QFileDevice::FileError err = QFileDevice::NoError;
-    if(!database.open(QIODevice::WriteOnly | QIODevice::Append)) {
-        std::cerr << "DATABASE DOESNT EXIST" << std::endl;
-        err = database.error();
-        ui->textBrowser->append(errMsg);
-        return;
-    }
-    for(int i = 0; i<5 && i<val.size(); i++){
-        dbData = CurrencyDatabase::formatDataForDB(&val.at(i));
-        QTextStream out(&database);
-        out << dbData;
-    }
-    database.close();
+    CurrencyDatabase::writeToDB(&val, QString(tradeDescriptionList[wpID].name + ".csv"));
+}
+
+
+void MainWindow::writeToTextBrowser(const QString output) {
+    ui->textBrowser->append(output);
 }
 
 

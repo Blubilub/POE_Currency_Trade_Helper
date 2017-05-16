@@ -45,6 +45,9 @@ private slots:
     void downloadClicked();
     void parseWebsiteSource(QNetworkReply* reply, int wpID);
 
+public slots:
+    void writeToTextBrowser(const QString output);
+
 };
 
 #endif // MAINWINDOW_H
